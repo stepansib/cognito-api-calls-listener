@@ -14,12 +14,12 @@
 
 ## Description
 
-Solution demonstrates how to asynchronously get notified about AWS Cognito API calls.
-Sometimes it is needed to react on any change of Cognito environment to react immediately. But Cognito quotas are pretty
+The solution demonstrates how to get notified about AWS Cognito API calls asynchronously.
+Sometimes it is necessary to react to any change in the Cognito environment immediately. But Cognito quotas are pretty
 restrictive in terms of calling its API so it can't be done pretty often
 
-This solution can be adjusted to intercept any change of Cognito environment that was done via AWS Cognito API call (no
-matter was it done programmatically or through the AWS Cognito Console).
+This solution can be adjusted to intercept any change in the Cognito environment that was done via an AWS Cognito API call (no
+matter whether it was done programmatically or through the AWS Cognito Console).
 
 Flow:
 
