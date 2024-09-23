@@ -1,5 +1,15 @@
 # AWS Cognito API Calls Monitoring and Processing
 
+## Table of contents
+
+- [AWS Cognito API Calls Monitoring and Processing](#aws-cognito-api-calls-monitoring-and-processing)
+  - [Description](#description)
+  - [How to use](#how-to-use)
+    - [Prepare](#prepare)
+    - [Deploy](#deploy)
+    - [Cleanup](#cleanup)
+    - [Contribute](#contribute)
+
 ## Description
 
 Solution demonstrates how to asynchronously get notified about AWS Cognito API calls.
@@ -31,9 +41,9 @@ You can change this behavior by adjusting AWS EventBridge rule pattern:
  - Filter the only API calls which body/payload match with any custom pattern  
  - And so on...
 
-## Deployment manual
+## How to use
 
-### Prerequisites
+### Prepare
 
 - Install [Node Version Manager](https://github.com/nvm-sh/nvm) globally
 - Clone the repository and navigate to the root folder
@@ -41,7 +51,7 @@ You can change this behavior by adjusting AWS EventBridge rule pattern:
 - Run `npm install` command to install all the project dependencies
 - Copy `.env.dist` file to `.env` and populate AWS account credentials
 
-### Deployment
+### Deploy
 
 - Run `npm run deploy` command to deploy CF stack to configured AWS account
 
@@ -49,7 +59,7 @@ You can change this behavior by adjusting AWS EventBridge rule pattern:
 
 - Run `npm run remove` command to remove CF stack from configured AWS account
 
-### Contribution
+### Contribute
 
 To follow ESLint and Prettier rules please setup husky pre-commit hook:
 
