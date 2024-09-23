@@ -3,12 +3,14 @@
 ## Table of contents
 
 - [AWS Cognito API Calls Monitoring and Processing](#aws-cognito-api-calls-monitoring-and-processing)
-  - [Description](#description)
-  - [How to use](#how-to-use)
-    - [Prepare](#prepare)
-    - [Deploy](#deploy)
-    - [Cleanup](#cleanup)
-    - [Contribute](#contribute)
+    - [Table of contents](#table-of-contents)
+    - [Description](#description)
+    - [How to use](#how-to-use)
+        - [Prepare](#prepare)
+        - [Deploy](#deploy)
+        - [Evaluate](#evaluate)
+        - [Cleanup](#cleanup)
+        - [Contribute](#contribute)
 
 ## Description
 
@@ -36,10 +38,11 @@ This PoC demonstrates how to intercept following AWS Cognito User Pool Applicati
 
 You can change this behavior by adjusting AWS EventBridge rule pattern:
 
- - Choose another API method(s)
- - Filter only events that relate to specific User Pool, App Client, Resource Server or any other part(s) of cognito environment
- - Filter the only API calls which body/payload match with any custom pattern  
- - And so on...
+- Choose another API method(s)
+- Filter only events that relate to specific User Pool, App Client, Resource Server or any other part(s) of cognito
+  environment
+- Filter the only API calls which body/payload match with any custom pattern
+- And so on...
 
 ## How to use
 
@@ -54,6 +57,15 @@ You can change this behavior by adjusting AWS EventBridge rule pattern:
 ### Deploy
 
 - Run `npm run deploy` command to deploy CF stack to configured AWS account
+
+### Evaluate
+
+- Change the allowed custom scopes configuration of the `acu-app-client` application client. For example - remove the
+  `acu-api/something.write` scope
+- Wait for several seconds and check the CloudWatch log group of the `acu-app-client-api-call-subscriber` Lambda
+- Note the corresponding log that represents `UpdateUserPoolClient` AWS Cognito API call (with its request parameters
+  and response)
+- Implement any custom logic that needs to be executed based on this API call
 
 ### Cleanup
 
