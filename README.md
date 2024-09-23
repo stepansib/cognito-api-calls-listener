@@ -63,8 +63,8 @@ You can change this behavior by adjusting AWS EventBridge rule pattern:
 - Change the allowed custom scopes configuration of the `acu-app-client` application client. For example - remove the
   `acu-api/something.write` scope
 - Wait for several seconds and check the CloudWatch log group of the `acu-app-client-api-call-subscriber` Lambda
-- Note the corresponding log that represents `UpdateUserPoolClient` AWS Cognito API call (with its request parameters
-  and response)
+- Note the corresponding log that represents `UpdateUserPoolClient` AWS Cognito API call (with its request parameters,
+  response, and other useful metadata)
 - Implement any custom logic that needs to be executed based on this API call
 
 ### Cleanup
