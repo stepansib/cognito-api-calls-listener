@@ -1,0 +1,179 @@
+useDotenv: true
+service: cognito-app-client-updates-tracking
+
+plugins:
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+  - serverless-prune-plugin
+  - serverless-dotenv-plugin
+  - serverless-deployment-bucket
+  - serverless-s3-cleaner
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, env:AWS_REGION, 'us-east-1'}
+  deploymentBucket:
+    name: ${env:SERVICE_PREFIX}-deployment-${aws:region}
+
+custom:
+  dotenv:
+    exclude:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_REGION
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules:
+      forceExclude:
+        - aws-sdk
+    packager: 'npm'
+    keepOutputDirectory: false
+  prune:
+    automatic: true
+    includeLayers: true
+    number: 1
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+  serverless-s3-cleaner:
+    buckets:
+      - ${env:SERVICE_PREFIX}-cloudtrail
+
+functions:
+  AppClientApiCallSubscriber:
+    name: ${env:SERVICE_PREFIX}-app-client-api-call-subscriber
+    handler: src/app-client-api-call-subscriber.handler
+
+resources:
+  Resources:
+    # Cognito config
+    UserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${env:SERVICE_PREFIX}-user-pool
+        UsernameAttributes:
+          - email
+        AccountRecoverySetting:
+          RecoveryMechanisms:
+            - Name: verified_email
+              Priority: 1
+        Schema:
+          - Name: email
+            Required: false
+        AutoVerifiedAttributes:
+          - email
+        UserAttributeUpdateSettings:
+          AttributesRequireVerificationBeforeUpdate:
+            - email
+        VerificationMessageTemplate:
+          DefaultEmailOption: CONFIRM_WITH_CODE
+        EmailConfiguration:
+          EmailSendingAccount: COGNITO_DEFAULT
+    UserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      DependsOn:
+        - UserPoolResourceServer
+      Properties:
+        ClientName: ${env:SERVICE_PREFIX}-app-client
+        UserPoolId: !Ref UserPool
+        AllowedOAuthFlows:
+          - client_credentials
+        AllowedOAuthFlowsUserPoolClient: true
+        AllowedOAuthScopes:
+          - ${env:SERVICE_PREFIX}-api/something.read
+          - ${env:SERVICE_PREFIX}-api/something.write
+        ExplicitAuthFlows:
+          - ALLOW_USER_SRP_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+          - ALLOW_USER_PASSWORD_AUTH
+        GenerateSecret: true
+        EnableTokenRevocation: true
+        PreventUserExistenceErrors: ENABLED
+    UserPoolResourceServer:
+      Type: AWS::Cognito::UserPoolResourceServer
+      Properties:
+        Identifier: ${env:SERVICE_PREFIX}-api
+        Name: ${env:SERVICE_PREFIX}-resource-server
+        Scopes:
+          - ScopeDescription: Ability to read something
+            ScopeName: something.read
+          - ScopeDescription: Ability to update something
+            ScopeName: something.write
+        UserPoolId: !Ref UserPool
+
+    # CloudTrail config
+    CloudtrailBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${env:SERVICE_PREFIX}-cloudtrail
+    CloudtrailBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      DependsOn:
+        - CloudtrailBucket
+      Properties:
+        Bucket: !Ref CloudtrailBucket
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Action:
+                - s3:GetBucketAcl
+              Effect: Allow
+              Resource:
+                - arn:aws:s3:::${env:SERVICE_PREFIX}-cloudtrail
+              Principal:
+                Service:
+                  - cloudtrail.amazonaws.com
+              Condition:
+                StringEquals:
+                  aws:SourceArn: arn:aws:cloudtrail:${aws:region}:${aws:accountId}:trail/${env:SERVICE_PREFIX}-main
+            - Action:
+                - s3:PutObject
+              Effect: Allow
+              Resource:
+                - arn:aws:s3:::${env:SERVICE_PREFIX}-cloudtrail/*
+              Principal:
+                Service:
+                  - cloudtrail.amazonaws.com
+              Condition:
+                StringEquals:
+                  s3:x-amz-acl: bucket-owner-full-control
+                  aws:SourceArn: arn:aws:cloudtrail:${aws:region}:${aws:accountId}:trail/${env:SERVICE_PREFIX}-main
+    Trail:
+      Type: AWS::CloudTrail::Trail
+      DependsOn:
+        - CloudtrailBucketPolicy
+      Properties:
+        TrailName: ${env:SERVICE_PREFIX}-main
+        IsLogging: true
+        IsMultiRegionTrail: false
+        IncludeGlobalServiceEvents: true
+        S3BucketName: !Ref CloudtrailBucket
+
+    # EventBridge config
+    AppClientApiCallRule:
+      Type: AWS::Events::Rule
+      Properties:
+        EventBusName: 'default'
+        EventPattern:
+          source:
+            - aws.cognito-idp
+          detail:
+            eventSource:
+              - cognito-idp.amazonaws.com
+            eventType:
+              - AwsApiCall
+            eventName:
+              - DeleteUserPoolClient
+              - UpdateUserPoolClient
+        Name: ${env:SERVICE_PREFIX}-app-client-api-call-events
+        Targets:
+          - Id: ${env:SERVICE_PREFIX}-app-client-api-call-subscriber
+            Arn: !GetAtt AppClientApiCallSubscriberLambdaFunction.Arn
+    AppClientApiCallSubscriberLambdaPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt AppClientApiCallSubscriberLambdaFunction.Arn
+        Action: lambda:InvokeFunction
+        Principal: events.amazonaws.com
+        SourceArn: !GetAtt AppClientApiCallRule.Arn
