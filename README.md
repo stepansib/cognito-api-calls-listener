@@ -33,7 +33,9 @@ Flow:
 
 ## Architecture design
 
-Work in progress...
+<div align="center">
+<img src="./docs/flow.png" />
+</div>
 
 ## How to use
 
