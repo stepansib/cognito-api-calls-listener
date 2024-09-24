@@ -1,16 +1,15 @@
-# AWS Cognito API Calls Monitoring and Processing
+# AWS Cognito API Calls Listener PoC
 
 ## Table of contents
 
-- [AWS Cognito API Calls Monitoring and Processing](#aws-cognito-api-calls-monitoring-and-processing)
-    - [Table of contents](#table-of-contents)
-    - [Description](#description)
-    - [How to use](#how-to-use)
-        - [Prepare](#prepare)
-        - [Deploy](#deploy)
-        - [Evaluate](#evaluate)
-        - [Cleanup](#cleanup)
-        - [Contribute](#contribute)
+- [Description](#description)
+- [Architecture design](#architecture-design)
+- [How to use](#how-to-use)
+    - [Prepare](#prepare)
+    - [Deploy](#deploy)
+    - [Evaluate](#evaluate)
+    - [Cleanup](#cleanup)
+    - [Contribute](#contribute)
 
 ## Description
 
@@ -43,6 +42,10 @@ You can change this behavior by adjusting AWS EventBridge rule pattern:
   environment
 - Filter the only API calls which body/payload match with any custom pattern
 - And so on...
+
+## Architecture design
+
+Work in progress...
 
 ## How to use
 
