@@ -5,11 +5,12 @@
 - [Description](#description)
 - [Architecture design](#architecture-design)
 - [How to use](#how-to-use)
-    - [Prepare](#prepare)
-    - [Deploy](#deploy)
-    - [Evaluate](#evaluate)
-    - [Cleanup](#cleanup)
-    - [Contribute](#contribute)
+  - [Prepare](#prepare)
+  - [Deploy](#deploy)
+  - [Evaluate](#evaluate)
+  - [Customize](#customize)
+  - [Cleanup](#cleanup)
+  - [Contribute](#contribute)
 
 ## Description
 
@@ -29,19 +30,6 @@ Flow:
 - Corresponding AWS EventBridge rule (pre-configured to match AWS CloudTrail events originated by specific AWS Cognito
   API calls) filtered matching event
 - Rule invoked its target (Lambda function) with the payload of event
-
-This PoC demonstrates how to intercept following AWS Cognito User Pool Application Client API calls
-
-- DeleteUserPoolClient
-- UpdateUserPoolClient
-
-You can change this behavior by adjusting AWS EventBridge rule pattern:
-
-- Choose another API method(s)
-- Filter only events that relate to specific User Pool, App Client, Resource Server or any other part(s) of cognito
-  environment
-- Filter the only API calls which body/payload match with any custom pattern
-- And so on...
 
 ## Architecture design
 
@@ -69,6 +57,21 @@ Work in progress...
 - Note the corresponding log that represents `UpdateUserPoolClient` AWS Cognito API call (with its request parameters,
   response, and other useful metadata)
 - Implement any custom logic that needs to be executed based on this API call
+
+### Customize
+
+This PoC demonstrates how to intercept following AWS Cognito User Pool Application Client API calls
+
+- DeleteUserPoolClient
+- UpdateUserPoolClient
+
+You can change this behavior by adjusting AWS EventBridge rule pattern:
+
+- Choose another API method(s)
+- Filter only events that relate to specific User Pool, App Client, Resource Server or any other part(s) of cognito
+  environment
+- Filter the only API calls which body/payload match with any custom pattern
+- And so on...
 
 ### Cleanup
 
