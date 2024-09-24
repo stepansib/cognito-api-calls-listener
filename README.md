@@ -44,6 +44,7 @@ Work in progress...
 - Run `nvm use` command to switch (and optionally download) to required Node.js version
 - Run `npm install` command to install all the project dependencies
 - Copy `.env.dist` file to `.env` and populate AWS account credentials
+- (optional) [Setup pre-commit hook](#contribute)
 
 ### Deploy
 
@@ -79,6 +80,6 @@ You can change this behavior by adjusting AWS EventBridge rule pattern:
 
 ### Contribute
 
-To follow ESLint and Prettier rules please setup husky pre-commit hook:
+To follow ESLint and Prettier rules please setup husky pre-commit hook by running the following command:
 
 - `npx husky init && echo "lint-staged && npm run build" > .husky/pre-commit`
