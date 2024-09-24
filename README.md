@@ -51,9 +51,9 @@ Work in progress...
 
 ### Evaluate
 
-- Change the allowed custom scopes configuration of the `acu-app-client` application client. For example - remove the
-  `acu-api/something.write` scope
-- Wait for several seconds and check the CloudWatch log group of the `acu-app-client-api-call-subscriber` Lambda
+- Change the allowed custom scopes configuration of the `cacl-app-client` application client. For example - remove the
+  `cacl-api/something.write` scope
+- Wait for several seconds and check the CloudWatch log group of the `cacl-app-client-api-call-subscriber` Lambda
 - Note the corresponding log that represents `UpdateUserPoolClient` AWS Cognito API call (with its request parameters,
   response, and other useful metadata)
 - Implement any custom logic that needs to be executed based on this API call
@@ -68,7 +68,7 @@ This PoC demonstrates how to intercept following AWS Cognito User Pool Applicati
 You can change this behavior by adjusting AWS EventBridge rule pattern:
 
 - Choose another API method(s)
-- Filter only events that relate to specific User Pool, App Client, Resource Server or any other part(s) of cognito
+- Filter only events that relate to specific User Pool, App Client, Resource Server or any other part(s) of Cognito
   environment
 - Filter the only API calls which body/payload match with any custom pattern
 - And so on...
