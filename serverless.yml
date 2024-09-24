@@ -1,5 +1,5 @@
 useDotenv: true
-service: cognito-app-client-updates-tracking
+service: cognito-api-calls-listener
 
 plugins:
   - serverless-webpack
