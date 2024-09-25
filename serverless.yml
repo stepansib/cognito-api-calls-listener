@@ -76,7 +76,8 @@ resources:
         - UserPoolResourceServer
       Properties:
         ClientName: ${env:SERVICE_PREFIX}-app-client
-        UserPoolId: !Ref UserPool
+        UserPoolId:
+          Fn::Sub: ${UserPool}
         AllowedOAuthFlows:
           - client_credentials
         AllowedOAuthFlowsUserPoolClient: true
@@ -100,7 +101,8 @@ resources:
             ScopeName: something.read
           - ScopeDescription: Ability to update something
             ScopeName: something.write
-        UserPoolId: !Ref UserPool
+        UserPoolId:
+          Fn::Sub: ${UserPool}
 
     # CloudTrail config
     CloudtrailBucket:
@@ -112,7 +114,8 @@ resources:
       DependsOn:
         - CloudtrailBucket
       Properties:
-        Bucket: !Ref CloudtrailBucket
+        Bucket:
+          Fn::Sub: ${CloudtrailBucket}
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -126,7 +129,8 @@ resources:
                   - cloudtrail.amazonaws.com
               Condition:
                 StringEquals:
-                  aws:SourceArn: arn:aws:cloudtrail:${aws:region}:${aws:accountId}:trail/${env:SERVICE_PREFIX}-main
+                  aws:SourceArn:
+                    Fn::Sub: arn:aws:cloudtrail:${aws:region}:${aws:accountId}:trail/${env:SERVICE_PREFIX}-main
             - Action:
                 - s3:PutObject
               Effect: Allow
@@ -138,7 +142,8 @@ resources:
               Condition:
                 StringEquals:
                   s3:x-amz-acl: bucket-owner-full-control
-                  aws:SourceArn: arn:aws:cloudtrail:${aws:region}:${aws:accountId}:trail/${env:SERVICE_PREFIX}-main
+                  aws:SourceArn:
+                    Fn::Sub: arn:aws:cloudtrail:${aws:region}:${aws:accountId}:trail/${env:SERVICE_PREFIX}-main
     Trail:
       Type: AWS::CloudTrail::Trail
       DependsOn:
@@ -148,7 +153,8 @@ resources:
         IsLogging: true
         IsMultiRegionTrail: false
         IncludeGlobalServiceEvents: true
-        S3BucketName: !Ref CloudtrailBucket
+        S3BucketName:
+          Fn::Sub: ${CloudtrailBucket}
 
     # EventBridge config
     AppClientApiCallRule:
@@ -169,11 +175,14 @@ resources:
         Name: ${env:SERVICE_PREFIX}-app-client-api-call-events
         Targets:
           - Id: ${env:SERVICE_PREFIX}-app-client-api-call-subscriber
-            Arn: !GetAtt AppClientApiCallSubscriberLambdaFunction.Arn
+            Arn:
+              Fn::Sub: ${AppClientApiCallSubscriberLambdaFunction.Arn}
     AppClientApiCallSubscriberLambdaPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt AppClientApiCallSubscriberLambdaFunction.Arn
+        FunctionName:
+          Fn::Sub: ${AppClientApiCallSubscriberLambdaFunction.Arn}
         Action: lambda:InvokeFunction
         Principal: events.amazonaws.com
-        SourceArn: !GetAtt AppClientApiCallRule.Arn
+        SourceArn:
+          Fn::Sub: ${AppClientApiCallRule.Arn}
