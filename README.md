@@ -5,12 +5,12 @@
 - [Description](#description)
 - [Architecture design](#architecture-design)
 - [How to use](#how-to-use)
-  - [Prepare](#prepare)
-  - [Deploy](#deploy)
-  - [Evaluate](#evaluate)
-  - [Customize](#customize)
-  - [Cleanup](#cleanup)
-  - [Contribute](#contribute)
+    - [Prepare](#prepare)
+    - [Deploy](#deploy)
+    - [Evaluate](#evaluate)
+    - [Customize](#customize)
+    - [Cleanup](#cleanup)
+    - [Contribute](#contribute)
 
 ## Description
 
@@ -18,7 +18,8 @@ The solution demonstrates how to get notified about AWS Cognito API calls asynch
 Sometimes it is necessary to react to any change in the Cognito environment immediately. But Cognito quotas are pretty
 restrictive in terms of calling its API so it can't be done pretty often
 
-This solution can be adjusted to intercept any change in the Cognito environment that was done via an AWS Cognito API call (no
+This solution can be adjusted to intercept any change in the Cognito environment that was done via an AWS Cognito API
+call (no
 matter whether it was done programmatically or through the AWS Cognito Console).
 
 Flow:
@@ -82,6 +83,6 @@ You can change this behavior by adjusting AWS EventBridge rule pattern:
 
 ### Contribute
 
-To follow ESLint and Prettier rules please setup husky pre-commit hook by running the following command:
-
-- `npx husky init && echo "lint-staged && npm run build" > .husky/pre-commit`
+- [Clone and setup project](#prepare)
+- To follow ESLint and Prettier rules setup husky pre-commit hook by running the following command:
+  `npx husky init && echo "lint-staged && npm run build" > .husky/pre-commit`
