@@ -86,3 +86,4 @@ You can change this behavior by adjusting AWS EventBridge rule pattern:
 - [Clone and setup project](#prepare)
 - To follow ESLint and Prettier rules setup husky pre-commit hook by running the following command:
   `npx husky init && echo "lint-staged && npm run build" > .husky/pre-commit`
+- Follow [Conventional Commits](https://www.conventionalcommits.org/) naming rules
